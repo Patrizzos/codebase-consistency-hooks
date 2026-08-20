@@ -10,6 +10,14 @@ VS Code. One engine. Thin adapters. Zero dependencies.
 
 ---
 
+## No tooling? Just use the prompt.
+
+The full concept is also available as a single structured prompt in [`PROMPT.md`](./PROMPT.md). Copy it into any agent, chat interface, or AI coding assistant that has read access to your repository — no installation, no git hooks, no Python required. It encodes the same family-detection logic, the same seven checks, the same flagging threshold, and the same output format as the engine.
+
+The Python engine and adapters exist for automation and enforcement. The prompt exists for everything else.
+
+---
+
 ## How it works
 
 ```
