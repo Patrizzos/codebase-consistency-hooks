@@ -1,0 +1,61 @@
+{
+  "_comment": "codebase-consistency-hooks VS Code task adapter. Copy to .vscode/tasks.json (or merge if one already exists). Accessible via Terminal > Run Task.",
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "codebase-consistency: check",
+      "detail": "Check changed files against existing conventions (text output, blocking exit code)",
+      "type": "shell",
+      "command": "python3 ${workspaceFolder}/scripts/check_pattern_consistency.py --format text",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "codebase-consistency: check (JSON)",
+      "detail": "Structured output — useful for scripting or reviewing all findings at once",
+      "type": "shell",
+      "command": "python3 ${workspaceFolder}/scripts/check_pattern_consistency.py --format json",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "codebase-consistency: emit SARIF",
+      "detail": "Write SARIF file to workspace root (open with SARIF Viewer extension)",
+      "type": "shell",
+      "command": "python3 ${workspaceFolder}/scripts/check_pattern_consistency.py --format sarif --warn-only > ${workspaceFolder}/consistency-results.sarif && echo 'Written: consistency-results.sarif'",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "codebase-consistency: check since branch base",
+      "detail": "Check only commits not yet on origin/main — mirrors what CI checks",
+      "type": "shell",
+      "command": "python3 ${workspaceFolder}/scripts/check_pattern_consistency.py --format text --since origin/main",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "codebase-consistency-hooks",
+  "version": "0.3.0",
+  "description": "Harness-agnostic pattern-convergence checker (pure Python + git, zero dependencies). Flags where new or changed code diverges from the dominant convention already used elsewhere in the repo. Adapters for Claude Code (Stop + PostToolUse hooks), git pre-commit/pre-push, GitHub Actions (with SARIF upload), Cursor, and VS Code. All adapters call the same engine — adding a new harness means writing a new thin adapter, not reimplementing the analysis.",
+  "author": {
+    "name": "REPLACE_WITH_YOUR_NAME_OR_ORG",
+    "url": "https://github.com/REPLACE_WITH_YOUR_GITHUB_USERNAME"
+  },
+  "repository": "https://github.com/REPLACE_WITH_YOUR_GITHUB_USERNAME/codebase-consistency-hooks",
+  "license": "MIT"
+}

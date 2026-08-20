@@ -1,0 +1,19 @@
+---
+description: Run pattern consistency check after editing source files
+globs: "**/*.py,**/*.ts,**/*.js,**/*.tsx,**/*.jsx"
+alwaysApply: false
+---
+
+After making code changes, run the codebase pattern consistency check:
+
+```bash
+python3 scripts/check_pattern_consistency.py --format text
+```
+
+**Exit 0** — clean. Proceed.
+**Exit 1** — divergence found. The output names the file, the dominant convention among similar existing files, and example files that follow it. Adjust the changed file to match the dominant pattern, then re-run to confirm clean before finishing the task.
+**Exit 2** — internal error in the checker. Safe to ignore.
+
+For structured output when planning fixes: `--format json`
+For SARIF (CI/Security tab): `--format sarif`
+LLM enrichment is automatic when `ANTHROPIC_API_KEY` is set.

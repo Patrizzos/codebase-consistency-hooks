@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# codebase-consistency: git pre-commit adapter.
+#
+# This is the most universal adapter of the set: it doesn't care what
+# wrote the diff -- Claude Code, Codex CLI, Cursor, aider, or a person
+# typing by hand -- because it just asks git what's staged.
+#
+# Install:
+#   cp adapters/git/pre-commit .git/hooks/pre-commit
+#   chmod +x .git/hooks/pre-commit
+#
+# To warn instead of block the commit, add --warn-only below.
+
+set -euo pipefail
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+SCRIPT="$REPO_ROOT/scripts/check_pattern_consistency.py"
+
+if [ ! -f "$SCRIPT" ]; then
+  # Plugin not present in this repo -- nothing to do.
+  exit 0
+fi
+
+python3 "$SCRIPT" --format text || {
+  status=$?
+  if [ "$status" -eq 1 ]; then
+    echo ""
+    echo "codebase-consistency: commit blocked. Fix the above, or commit with --no-verify to skip this check."
+    exit 1
+  fi
+  # status 2 = internal error in the checker itself -- don't block the commit on our own bug
+  exit 0
+}

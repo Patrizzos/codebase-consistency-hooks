@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# codebase-consistency: git pre-push adapter.
+#
+# Runs on every push, checking all commits being sent that aren't already
+# on the remote. Catches anything committed with --no-verify that bypassed
+# the pre-commit hook. Works regardless of what tool or person authored
+# the commits — we ask git what changed, not any AI harness.
+#
+# Install:
+#   cp adapters/git/pre-push .git/hooks/pre-push
+#   chmod +x .git/hooks/pre-push
+#
+# To warn instead of block, add --warn-only to the python3 call below.
+
+set -euo pipefail
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+SCRIPT="$REPO_ROOT/scripts/check_pattern_consistency.py"
+
+# Plugin not present in this repo — nothing to do.
+[ ! -f "$SCRIPT" ] && exit 0
+
+# git passes one line per ref being pushed: local_ref local_sha remote_ref remote_sha
+while IFS=" " read -r _local_ref local_sha _remote_ref remote_sha; do
+    if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+        # New branch: find the point where it diverged from the remote default branch.
+        REF="$(git merge-base "$local_sha" "origin/HEAD" 2>/dev/null || echo "HEAD~1")"
+    else
+        REF="$remote_sha"
+    fi
+
+    python3 "$SCRIPT" --format text --since "$REF" || {
+        status=$?
+        if [ "$status" -eq 1 ]; then
+            echo ""
+            echo "codebase-consistency: push blocked. Fix the above divergences,"
+            echo "or push with --no-verify to bypass (use sparingly)."
+            exit 1
+        fi
+        # exit 2 = internal error in the checker — don't block the push on our own bug.
+        exit 0
+    }
+done

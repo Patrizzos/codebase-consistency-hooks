@@ -1,0 +1,13 @@
+{
+  "name": "codebase-consistency-hooks-marketplace",
+  "owner": {
+    "name": "REPLACE_WITH_YOUR_NAME_OR_ORG"
+  },
+  "plugins": [
+    {
+      "name": "codebase-consistency-hooks",
+      "source": "./",
+      "description": "Pattern-consistency checker: after a change, checks the rest of the codebase for similar existing solutions and converges new code on the dominant one. Claude Code is one of several supported harnesses."
+    }
+  ]
+}

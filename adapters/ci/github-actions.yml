@@ -1,0 +1,63 @@
+# codebase-consistency: GitHub Actions adapter — v0.3.0
+#
+# Purpose: PR-level and post-merge safety net, independent of what tool
+# or human authored the changes, and independent of whether local hooks
+# are installed.
+#
+# Two steps per run:
+#   1. Text check (blocking by default) — exits 1 on findings, fails the job.
+#   2. SARIF emit + upload (always runs) — surfaces findings in the
+#      GitHub Security tab even on PRs that would otherwise pass.
+#
+# To make advisory only: set continue-on-error: true on the text check step.
+# To run on more branches: extend the push.branches list below.
+
+name: codebase-consistency
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents:        read
+      security-events: write   # required for SARIF upload to GitHub Security tab
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history needed for --since comparisons
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Check pattern consistency (blocking)
+        run: |
+          python3 scripts/check_pattern_consistency.py \
+            --format text \
+            --since "origin/${{ github.base_ref || 'HEAD~1' }}"
+        # Remove or set to true to make this advisory only during ramp-up.
+        continue-on-error: false
+
+      - name: Emit SARIF for GitHub Security tab
+        if: always()
+        run: |
+          python3 scripts/check_pattern_consistency.py \
+            --format sarif \
+            --warn-only \
+            --since "origin/${{ github.base_ref || 'HEAD~1' }}" \
+            > consistency-results.sarif || true
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: consistency-results.sarif
+        # Don't fail the job if SARIF upload itself errors (e.g. empty file).
+        continue-on-error: true

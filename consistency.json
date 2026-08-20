@@ -1,0 +1,23 @@
+{
+  "_comment": "codebase-consistency-hooks config. All fields optional — these are the defaults. CLI flags always override values here. Delete fields you don't want to change from the default.",
+
+  "majority_threshold": 0.6,
+  "similarity_floor":   0.15,
+  "family_size":        8,
+  "max_changed_files":  5,
+
+  "ignore_dirs": [],
+
+  "checks": {
+    "error_handling_style":     true,
+    "logging_call":             true,
+    "naming_convention":        true,
+    "docstring_coverage":       true,
+    "import_organization":      true,
+    "type_annotation_coverage": true,
+    "return_consistency":       true
+  },
+
+  "warn_only": false,
+  "no_llm":    false
+}

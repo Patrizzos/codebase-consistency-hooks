@@ -1,0 +1,36 @@
+# codebase-consistency-hooks
+#
+# After editing any source file, run the pattern consistency check and
+# address any findings before considering the task complete.
+#
+# COMMAND
+#   python3 scripts/check_pattern_consistency.py --format text
+#
+# EXIT CODES
+#   0  Clean — no divergence from existing conventions. Proceed.
+#   1  Findings — output explains which file, what the dominant convention
+#      is, and which existing files to follow. Fix the flagged file to match,
+#      then re-run to confirm clean before finishing.
+#   2  Internal error in the checker itself — safe to ignore and proceed.
+#
+# STRUCTURED OUTPUT (useful when planning fixes across multiple files)
+#   python3 scripts/check_pattern_consistency.py --format json
+#
+# LLM-ENRICHED OUTPUT (requires ANTHROPIC_API_KEY in environment)
+#   The checker calls the API automatically when the key is present.
+#   No extra flags needed.
+#
+# CHECKS PERFORMED
+#   error_handling_style     — reraise vs swallow vs log_and_continue
+#   logging_call             — logger vs logging vs print vs console.*
+#   naming_convention        — snake_case vs camelCase vs PascalCase
+#   docstring_coverage       — documented vs undocumented (.py only)
+#   import_organization      — grouped (isort) vs flat
+#   type_annotation_coverage — typed vs untyped (.py / .ts / .tsx)
+#   return_consistency       — explicit_return vs implicit_return
+#
+# TUNING (optional — place consistency.json at repo root)
+#   {
+#     "majority_threshold": 0.6,
+#     "checks": { "docstring_coverage": false }
+#   }

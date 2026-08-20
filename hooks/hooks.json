@@ -1,0 +1,38 @@
+{
+  "description": "codebase-consistency-hooks v0.3.0: two-mode Claude Code adapter around scripts/check_pattern_consistency.py.\n\nStop hook (blocking): fires when Claude finishes a turn. If changed files diverge from the dominant existing convention, sends Claude back to reconcile before the turn ends. Uses --format claude-code-stop, which emits {decision, reason} JSON and always exits 0 per Claude Code protocol.\n\nPostToolUse hook (non-blocking, earlier signal): fires after each Write/Edit/MultiEdit tool call. Injects convention findings as additional context into Claude's next turn — earlier awareness, no hard block. Uses --format claude-code-context.\n\nBoth hooks call the same harness-agnostic engine. Neither uses the experimental agent hook type.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/check_pattern_consistency.py",
+              "--format",
+              "claude-code-stop"
+            ],
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/check_pattern_consistency.py",
+              "--format",
+              "claude-code-context"
+            ],
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
