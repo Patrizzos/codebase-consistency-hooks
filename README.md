@@ -278,22 +278,6 @@ python3 scripts/check_pattern_consistency.py --no-llm
 
 ---
 
-## Before pushing
-
-Replace `REPLACE_WITH_...` placeholders in:
-- `.claude-plugin/plugin.json`
-- `.claude-plugin/marketplace.json`
-- `LICENSE`
-
-## Publishing
-
-```bash
-git init
-git add .
-git commit -m "Initial commit: codebase-consistency-hooks v0.3.0"
-gh repo create YOUR_USERNAME/codebase-consistency-hooks --public --source=. --remote=origin --push
-```
-
 ## Giving team access
 
 The engine and adapters are plain files — no bot token, no app to configure.
